@@ -1,5 +1,0 @@
-pip_tools
-black
-pylint
-
-
