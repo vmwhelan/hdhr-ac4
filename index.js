@@ -70,7 +70,7 @@ app.use((err, req, res, next) => {
   res.sendStatus(500)
 })
 
-media.use("/auto/:channel", async (req, res) => {
+media.use("/auto/:channel", async (req, res, next) => {
   try {
     // Pipe the stream to the output
     const stream = await axios.get(`http://${hdhr}:5004/auto/${req.params.channel}`, {
@@ -97,6 +97,10 @@ media.use("/auto/:channel", async (req, res) => {
 
       stream.data.pipe(ffmpeg.stdin)
       ffmpeg.stdout.pipe(res)
+
+      res.on("error", () => {
+        ffmpeg.kill()
+      })
 
       res.on("close", () => {
         ffmpeg.kill()
