@@ -72,9 +72,13 @@ app.use((err, req, res, next) => {
 
 media.use("/auto/:channel", async (req, res, next) => {
   try {
+    // Create a cancel token to end the stream when the client disconnects
+    const cancelSource = axios.CancelToken.source()
+
     // Pipe the stream to the output
     const stream = await axios.get(`http://${hdhr}:5004/auto/${req.params.channel}`, {
       responseType: "stream",
+      cancelToken: cancelSource.token,
     })
     if (stream.status === 200) {
       const ffmpeg = spawn("/usr/bin/ffmpeg", [
@@ -84,12 +88,14 @@ media.use("/auto/:channel", async (req, res, next) => {
         "warning",
         "-i",
         "pipe:",
-        "-c:a",
-        "ac3",
+        "-map",
+        "0",
         "-c:v",
         "copy",
-        "-c:s",
-        "copy",
+        "-c:a",
+        "ac3",
+        "-ar",
+        "48000",
         "-f",
         "mpegts",
         "-",
@@ -98,12 +104,18 @@ media.use("/auto/:channel", async (req, res, next) => {
       stream.data.pipe(ffmpeg.stdin)
       ffmpeg.stdout.pipe(res)
 
+      ffmpeg.on("spawn", () => {
+        console.debug(`Tuning channel ${req.params.channel}`)
+      })
+
       res.on("error", () => {
-        ffmpeg.kill()
+        console.log(`Response error. Stopping ${req.params.channel}`)
+        cancelSource.cancel()
       })
 
       res.on("close", () => {
-        ffmpeg.kill()
+        console.log(`Response disconnected. Stopping ${req.params.channel}`)
+        cancelSource.cancel()
       })
     } else {
       console.log(`Error: ${stream.status}`)
