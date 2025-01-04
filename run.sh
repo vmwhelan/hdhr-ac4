@@ -11,7 +11,7 @@ echo "Detected architecture: $(uname -m)"
 if [ "$LINK" ]; then
   echo "Overriding Emby release"
   LINK=$LINK
-elif [ "$(uname -m)" == "amd64" ]; then
+elif [ "$(uname -m)" == "x86_64" ]; then
   LINK="https://github.com/MediaBrowser/Emby.Releases/releases/download/4.8.10.0/emby-server-deb_4.8.10.0_amd64.deb"
 elif [ "$(uname -m)" == "aarch64" ]; then
   LINK="https://github.com/MediaBrowser/Emby.Releases/releases/download/4.8.10.0/emby-server-deb_4.8.10.0_arm64.deb"
