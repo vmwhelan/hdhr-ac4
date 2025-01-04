@@ -18,16 +18,10 @@ I've only tested with Plex and VLC.
 - Always reverses the device ID (so the emulated tuner can coexist with the real one in Plex).
 - Simplified configuration (only the `HDHR_IP` variable needs to be set).
 
-## How to build the docker image
+## How to use this docker container
 
 ```
-docker build -t hdhr-ac4 .
-```
-
-## How to run the docker container
-
-```
-docker run -p 5003:80 -p 5004:5004 -e HDHR_IP=192.168.0.123 hdhr-ac4
+docker run -p 5003:80 -p 5004:5004 -e HDHR_IP=192.168.0.123 ghcr.io/whichken/hdhr-ac4
 ```
 
 On startup, the container will download an Emby release and extract ffmpeg from it. It will detect amd64
@@ -38,10 +32,6 @@ the `LINK` environment variable to a URL of a .deb file from https://github.com/
 
 Now go to Plex and add a new tuner. Enter the container IP and your chosen port (ex. 192.168.0.234:5003)
 as the tuner address. Plex should see and add it without issue.
-
-## Possible future enhancements
-
-- Set up an automatic build and push the image to a public repo.
 
 ## License
 
