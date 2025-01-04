@@ -24,14 +24,15 @@ I've only tested with Plex and VLC.
 docker build -t hdhr-ac4 .
 ```
 
-The docker build will download an Emby release and extract ffmpeg from it. You may need to update the
-URL in the future if it changes.
-
 ## How to run the docker container
 
 ```
 docker run -p 5003:80 -p 5004:5004 -e HDHR_IP=192.168.0.123 hdhr-ac4
 ```
+
+On startup, the container will download an Emby release and extract ffmpeg from it. It will detect amd64
+or arm64 architectures and download the appropriate release. You can override the release it uses by setting
+the `LINK` environment variable to a URL of a .deb file from https://github.com/MediaBrowser/Emby.Releases/releases.
 
 > You can use any host port you want for port 80, but port 5004 can't be changed.
 
@@ -40,7 +41,6 @@ as the tuner address. Plex should see and add it without issue.
 
 ## Possible future enhancements
 
-- Optimize the final image size (currently sits around 1.1GB)
 - Set up an automatic build and push the image to a public repo.
 
 ## License
