@@ -21,7 +21,6 @@ else
 fi
 
 echo "Downloading Emby from $LINK"
-apt-get install -y binutils xz-utils
 curl -L -o emby.deb $LINK
 ar x emby.deb data.tar.xz
 tar xf data.tar.xz
